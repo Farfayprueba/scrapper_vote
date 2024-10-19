@@ -1,4 +1,5 @@
 import time
+import csv
 import threading
 import subprocess
 import pyautogui
@@ -44,6 +45,13 @@ class ScraperPool(threading.Thread):
 			time.sleep(1)
 			self.__close_nav()
 			time.sleep(4)
+			self.save_mail_to_csv(self.__mail)
+
+	def save_mail_to_csv(self, mail):
+		with open("generated_emails.csv", mode="a", newline="") as file:
+			writer = csv.writer(file)
+			writer.writerow([mail])
+		print(f"Correo guardado en CSV: {mail}")
 
 	def __get_available_driver(self, driverScrap:dict):
 		for driver in driverScrap.values():
