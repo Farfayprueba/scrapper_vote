@@ -1,4 +1,5 @@
 import time
+import os
 import csv
 import threading
 import subprocess
@@ -41,7 +42,11 @@ class ScraperPool(threading.Thread):
 				self.__click_next()
 			self.__votar()
 			time.sleep(1)
-			self.__clear_chrome_data()
+			#self.__clear_chrome_data()
+			self.__navigate_link("chrome://settings/clearBrowserData")
+			time.sleep(1)
+			#pyautogui.press("enter")
+			self.__click_button("eliminar")
 			time.sleep(1)
 			self.__close_nav()
 			time.sleep(4)
@@ -79,7 +84,6 @@ class ScraperPool(threading.Thread):
 		if self.__validate_image("ingresar_captcha"):
 			print("cerrando navegador")
 			time.sleep(2)
-			self.__clear_chrome_data()
 			time.sleep(1)
 			self.__close_nav()
 			time.sleep(5)
@@ -130,12 +134,14 @@ class ScraperPool(threading.Thread):
 
 	def __close_nav(self):
 		try:
-			self.__process.terminate()
-			time.sleep(5)
-			if self.__process.poll() is None: 
-				self.__process.kill()
-		except:
-			pass
+			if os.name == 'nt':  # Para Windows
+				subprocess.call("taskkill /IM chrome.exe /F", shell=True)
+			else: 
+				subprocess.call("pkill -f chrome", shell=True)
+			print("Todos los procesos de Chrome han sido cerrados.")
+		
+		except Exception as e:
+			print(f"Error al cerrar Chrome: {e}")
 	
 	def __navigate_link(self, linkDestiny:str)->bool:
 		try:

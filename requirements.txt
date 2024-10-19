@@ -1,3 +1,6 @@
 pyautogui
+selenium
 beautifulsoup4==4.11.1
-request
+requests
+selenium-wire
+undetected_chromedriver
