@@ -2,8 +2,10 @@ import time
 import os
 import csv
 import threading
+from datetime import datetime
 import subprocess
 import pyautogui
+from bs4 import BeautifulSoup
 
 from app import _ENV
 from app.libraries.mail_temp import Mail
@@ -74,7 +76,7 @@ class ScraperPool(threading.Thread):
 		try:
 			while True:
 				time.sleep(1)
-				if self.__validate_image("objetivo"):
+				if self.__validate_objetive():
 					pyautogui.click(self.__coords.voteBttn)
 					time.sleep(2)
 					pyautogui.click(self.__coords.voteBttnMain)
@@ -84,6 +86,62 @@ class ScraperPool(threading.Thread):
 		except Exception as e:
 			print(e)
 
+	def __votar(self):
+		try:
+			while True:
+				time.sleep(1)
+				if self.__validate_objetive():
+					pyautogui.click(self.__coords.voteBttn)
+					time.sleep(2)
+					pyautogui.click(self.__coords.voteBttnMain)
+					time.sleep(1)
+					return False
+				self.__click_next()
+		except Exception as e:
+			print(e)
+
+	def __validate_objetive(self):
+		self.__save_html()
+		time.sleep(2)
+		if self.__process_html():
+			return True
+		else:
+			return False
+
+	def __process_html(self):
+		filename = os.path.join(self._ENV.paths.download, f'pagina_{self.timestamp}.html')
+		try:
+			with open(filename, 'r', encoding='utf-8') as file:
+				html_content = file.read()
+			soup = BeautifulSoup(html_content, 'html.parser')
+			if "Karen Doggenweiler" in soup.get_text():
+				return True
+			return False
+		except Exception as e:
+			print(f"Error al procesar el HTML: {e}")
+			return False
+
+	def __save_html(self):
+		try:
+			self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+			filename = f'pagina_{self.timestamp}.html'
+			full_path = os.path.join(self._ENV.paths.download, filename)
+
+			pyautogui.hotkey('ctrl', 'u')  # Abre el código fuente en la mayoría de los navegadores
+			time.sleep(1)
+			pyautogui.hotkey('ctrl', 's')  # Abre el diálogo de guardar
+			time.sleep(1)
+			pyautogui.typewrite(full_path)  # Nombre del archivo único en la ruta de descarga
+			time.sleep(1)
+			pyautogui.press('enter')  # Confirma la acción de guardar
+			time.sleep(1)
+
+			# Procesar el HTML guardado y luego eliminarlo
+			if self.__process_html():
+				os.remove(full_path)  # Eliminar el archivo después de procesarlo
+		except Exception as e:
+			print(f"Error al guardar el HTML: {e}")
+ 
 	def __verify_captcha(self):
 		if self.__validate_image("ingresar_captcha"):
 			print("cerrando navegador")
