@@ -38,8 +38,6 @@ class ScraperPool(threading.Thread):
 			self.__linkValidation = Mail.get_mail_link(self.__mail)
 			time.sleep(3)
 			self.__navigate_link(self.__linkValidation)
-			for page in range(15):
-				self.__click_next()
 			self.__votar()
 			time.sleep(1)
 			#self.__clear_chrome_data()
@@ -73,10 +71,15 @@ class ScraperPool(threading.Thread):
 
 	def __votar(self):
 		try:
-			pyautogui.click(self.__coords.voteBttn)
-			time.sleep(2)
-			pyautogui.click(self.__coords.voteBttnMain)
-			time.sleep(1)
+			while True:
+				time.sleep(1)
+				if self.__validate_image("objetivo"):
+					pyautogui.click(self.__coords.voteBttn)
+					time.sleep(2)
+					pyautogui.click(self.__coords.voteBttnMain)
+					time.sleep(1)
+					return False
+				self.__click_next()
 		except Exception as e:
 			print(e)
 
@@ -107,12 +110,17 @@ class ScraperPool(threading.Thread):
 			pyautogui.write(user[1])
 			time.sleep(1)
 			self.__verify_captcha()
-			self.__click_button("ingresar")
+			#self.__click_button("ingresar")
+			pyautogui.press("enter")
 			time.sleep(3)
+			pyautogui.press("tab")
 			pyautogui.click(self.__coords.fullName)
 			pyautogui.write(self.__name)
 			pyautogui.press('space')
 			pyautogui.write(self.__lastName)
+			time.sleep(2)
+			#pyautogui.press("enter")
+			input("hola")
 			self.__click_button("ingresar")
 		except Exception as e:
 			print(e)
