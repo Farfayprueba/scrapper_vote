@@ -1,5 +1,6 @@
 import time
 import os
+import shutil
 import csv
 import threading
 from datetime import datetime
@@ -41,9 +42,10 @@ class ScraperPool(threading.Thread):
 			time.sleep(3)
 			self.__navigate_link(self.__linkValidation)
 			time.sleep(3)
+			for i in range(14):
+				self.__click_next()
 			self.__votar()
 			time.sleep(1)
-			#self.__clear_chrome_data()
 			self.__navigate_link("chrome://settings/clearBrowserData")
 			time.sleep(1)
 			#pyautogui.press("enter")
@@ -75,70 +77,59 @@ class ScraperPool(threading.Thread):
 	def __votar(self):
 		try:
 			while True:
-				time.sleep(1)
 				if self.__validate_objetive():
-					pyautogui.click(self.__coords.voteBttn)
-					time.sleep(2)
-					pyautogui.click(self.__coords.voteBttnMain)
-					time.sleep(1)
-					return False
-				self.__click_next()
-		except Exception as e:
-			print(e)
-
-	def __votar(self):
-		try:
-			while True:
-				time.sleep(1)
-				if self.__validate_objetive():
-					pyautogui.click(self.__coords.voteBttn)
-					time.sleep(2)
-					pyautogui.click(self.__coords.voteBttnMain)
-					time.sleep(1)
-					return False
+					try:
+						pyautogui.click(self.__coords.voteBttn)
+						time.sleep(2)
+						pyautogui.click(self.__coords.voteBttnMain)
+						time.sleep(1)
+						print("voto dado correctamente")
+						return False
+					except Exception as e:
+						print(e)
 				self.__click_next()
 		except Exception as e:
 			print(e)
 
 	def __validate_objetive(self):
-		self.__save_html()
-		time.sleep(2)
-		if self.__process_html():
-			return True
-		else:
-			return False
+		try:
+			self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+			filename = f'pagina_{self.timestamp}.html'
+			full_path = os.path.join(_ENV.paths.downloads, filename)
+			self.__save_html(filename)
+			time.sleep(5)
+			value = self.__process_html(full_path)
+			if os.path.isfile(full_path): 
+				os.remove(full_path)
+			folder_to_remove = os.path.join(_ENV.paths.downloads, f'{filename}_files')
+			if os.path.isdir(folder_to_remove):  
+				shutil.rmtree(folder_to_remove) 
+				print("Eliminado correctamente")
+			return value  
+		except Exception as e:
+			print(e)
 
-	def __process_html(self):
-		filename = os.path.join(self._ENV.paths.download, f'pagina_{self.timestamp}.html')
+	def __process_html(self, filename):
 		try:
 			with open(filename, 'r', encoding='utf-8') as file:
 				html_content = file.read()
 			soup = BeautifulSoup(html_content, 'html.parser')
 			if "Karen Doggenweiler" in soup.get_text():
+				print("si esta")
 				return True
 			return False
 		except Exception as e:
 			print(f"Error al procesar el HTML: {e}")
 			return False
 
-	def __save_html(self):
+	def __save_html(self, filename: str):
 		try:
-			self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-			filename = f'pagina_{self.timestamp}.html'
-			full_path = os.path.join(self._ENV.paths.download, filename)
-
-			pyautogui.hotkey('ctrl', 'u')  # Abre el código fuente en la mayoría de los navegadores
-			time.sleep(1)
 			pyautogui.hotkey('ctrl', 's')  # Abre el diálogo de guardar
-			time.sleep(1)
-			pyautogui.typewrite(full_path)  # Nombre del archivo único en la ruta de descarga
-			time.sleep(1)
+			time.sleep(2)
+			pyautogui.typewrite(filename)  # Nombre del archivo único en la ruta de descarga
+			time.sleep(2)
 			pyautogui.press('enter')  # Confirma la acción de guardar
 			time.sleep(1)
-
-			# Procesar el HTML guardado y luego eliminarlo
-			if self.__process_html():
-				os.remove(full_path)  # Eliminar el archivo después de procesarlo
 		except Exception as e:
 			print(f"Error al guardar el HTML: {e}")
  
