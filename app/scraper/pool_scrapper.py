@@ -38,7 +38,7 @@ class ScraperPool(threading.Thread):
 			self.__linkValidation = Mail.get_mail_link(self.__mail)
 			time.sleep(3)
 			self.__navigate_link(self.__linkValidation)
-			for page in range(15):
+			for page in range(16):
 				self.__click_next()
 			self.__votar()
 			time.sleep(1)
