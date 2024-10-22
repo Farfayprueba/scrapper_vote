@@ -97,8 +97,9 @@ class ScraperPool(threading.Thread):
 
 	def __login(self):
 		try:
+			time.sleep(2)
 			pyautogui.click(self.__coords.placeholder)
-			time.sleep(1.5)
+			time.sleep(1.5)		
 			pyautogui.press('backspace')
 			time.sleep(1.5)
 			user = self.__mail.split('@')
@@ -111,17 +112,16 @@ class ScraperPool(threading.Thread):
 			pyautogui.write(user[1])
 			time.sleep(1)
 			self.__verify_captcha()
-			#self.__click_button("ingresar")
-			pyautogui.press("enter")
+			self.__click_button("ingresar")
+			#pyautogui.press("enter")
 			time.sleep(3)
-			pyautogui.press("tab")
+			#pyautogui.press("tab")
 			pyautogui.click(self.__coords.fullName)
 			pyautogui.write(self.__name)
 			pyautogui.press('space')
 			pyautogui.write(self.__lastName)
 			time.sleep(2)
 			#pyautogui.press("enter")
-			input("hola")
 			self.__click_button("ingresar")
 		except Exception as e:
 			print(e)
