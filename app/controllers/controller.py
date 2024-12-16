@@ -6,7 +6,8 @@ from selenium.webdriver import Firefox
 
 from app.libraries.driver import Driver
 from app.libraries.mail_temp import Mail
-from app.scraper.pool_scrapper import ScraperPool
+from app.scraper.scraper import ScraperPool
+from app.scraper.strawPoll import ScraperStrawPool
 
 class Controller:
 
