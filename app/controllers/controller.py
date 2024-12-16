@@ -17,8 +17,6 @@ class Controller:
 	def main(cls):
 		taskes = []
 		print("Iniciando proceso de bots")
-		name = "Isaac"
-		lastName = "Perez"
 		scrapper = ScraperPool(name, lastName)
 		scrapper.run()
 		#for driver in drivers.values():
