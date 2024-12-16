@@ -20,7 +20,7 @@ class ProxyService:
 	__backup:List[ProxyEntity]
 	__proxy:ProxyEntity
 
-	def __init__(self, proxies: List[dict]):
+	def __init__(self, proxies: List[ProxyEntity]):
 		self.__proxies = proxies
 		self.__backup = self.__proxies.copy()
 		self.__proxy = None
