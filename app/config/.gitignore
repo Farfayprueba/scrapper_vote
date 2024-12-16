@@ -1,5 +1,6 @@
 /__pycache__
 *.ini
+app/config/config.ini
 !base.config.ini
 __pycache__/
 *.pyc
