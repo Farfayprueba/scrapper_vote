@@ -12,6 +12,7 @@ class PoolEntity:
     nextBttn    : list
     voteBttn    : list
     voteBttnMain: list
+    delete : list
        
     @staticmethod
     def init_entity(entity:Any)->'PoolEntity':
@@ -23,4 +24,5 @@ class PoolEntity:
         nextBttn     = [int(x) for x in entity.nextbttn.split(',')]
         voteBttn     = [int(x) for x in entity.votebttn.split(',')]
         voteBttnMain = [int(x) for x in entity.votebttnmain.split(',')]
-        return PoolEntity(link, placeholder, ingresarBttn, captcha, fullName, nextBttn, voteBttn, voteBttnMain)
+        delete = [int(x) for x in entity.eliminar.split(',')]
+        return PoolEntity(link, placeholder, ingresarBttn, captcha, fullName, nextBttn, voteBttn, voteBttnMain, delete)

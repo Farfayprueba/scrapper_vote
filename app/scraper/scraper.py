@@ -1,8 +1,12 @@
 import time
+import os
+import shutil
 import csv
 import threading
+from datetime import datetime
 import subprocess
 import pyautogui
+from bs4 import BeautifulSoup
 
 from app import _ENV
 from app.libraries.mail_temp import Mail
@@ -37,11 +41,15 @@ class ScraperPool(threading.Thread):
 			self.__linkValidation = Mail.get_mail_link(self.__mail)
 			time.sleep(3)
 			self.__navigate_link(self.__linkValidation)
-			for page in range(15):
+			time.sleep(3)
+			for i in range(14):
 				self.__click_next()
 			self.__votar()
 			time.sleep(1)
-			self.__clear_chrome_data()
+			self.__navigate_link("chrome://settings/clearBrowserData")
+			time.sleep(1)
+			#pyautogui.press("enter")
+			self.__click_button("eliminar")
 			time.sleep(1)
 			self.__close_nav()
 			time.sleep(4)
@@ -68,18 +76,67 @@ class ScraperPool(threading.Thread):
 
 	def __votar(self):
 		try:
-			pyautogui.click(self.__coords.voteBttn)
-			time.sleep(2)
-			pyautogui.click(self.__coords.voteBttnMain)
-			time.sleep(1)
+			while True:
+				if self.__validate_objetive():
+					try:
+						pyautogui.click(self.__coords.voteBttn)
+						time.sleep(2)
+						pyautogui.click(self.__coords.voteBttnMain)
+						time.sleep(1)
+						print("voto dado correctamente")
+						return False
+					except Exception as e:
+						print(e)
+				self.__click_next()
 		except Exception as e:
 			print(e)
 
+	def __validate_objetive(self):
+		try:
+			self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+			filename = f'pagina_{self.timestamp}.html'
+			full_path = os.path.join(_ENV.paths.downloads, filename)
+			self.__save_html(filename)
+			time.sleep(5)
+			value = self.__process_html(full_path)
+			if os.path.isfile(full_path): 
+				os.remove(full_path)
+			folder_to_remove = os.path.join(_ENV.paths.downloads, f'{filename}_files')
+			if os.path.isdir(folder_to_remove):  
+				shutil.rmtree(folder_to_remove) 
+				print("Eliminado correctamente")
+			return value  
+		except Exception as e:
+			print(e)
+
+	def __process_html(self, filename):
+		try:
+			with open(filename, 'r', encoding='utf-8') as file:
+				html_content = file.read()
+			soup = BeautifulSoup(html_content, 'html.parser')
+			if "Karen Doggenweiler" in soup.get_text():
+				print("si esta")
+				return True
+			return False
+		except Exception as e:
+			print(f"Error al procesar el HTML: {e}")
+			return False
+
+	def __save_html(self, filename: str):
+		try:
+			pyautogui.hotkey('ctrl', 's')  # Abre el diálogo de guardar
+			time.sleep(2)
+			pyautogui.typewrite(filename)  # Nombre del archivo único en la ruta de descarga
+			time.sleep(2)
+			pyautogui.press('enter')  # Confirma la acción de guardar
+			time.sleep(1)
+		except Exception as e:
+			print(f"Error al guardar el HTML: {e}")
+ 
 	def __verify_captcha(self):
 		if self.__validate_image("ingresar_captcha"):
 			print("cerrando navegador")
 			time.sleep(2)
-			self.__clear_chrome_data()
 			time.sleep(1)
 			self.__close_nav()
 			time.sleep(5)
@@ -89,8 +146,9 @@ class ScraperPool(threading.Thread):
 
 	def __login(self):
 		try:
+			time.sleep(2)
 			pyautogui.click(self.__coords.placeholder)
-			time.sleep(1.5)
+			time.sleep(1.5)		
 			pyautogui.press('backspace')
 			time.sleep(1.5)
 			user = self.__mail.split('@')
@@ -104,11 +162,15 @@ class ScraperPool(threading.Thread):
 			time.sleep(1)
 			self.__verify_captcha()
 			self.__click_button("ingresar")
+			#pyautogui.press("enter")
 			time.sleep(3)
+			#pyautogui.press("tab")
 			pyautogui.click(self.__coords.fullName)
 			pyautogui.write(self.__name)
 			pyautogui.press('space')
 			pyautogui.write(self.__lastName)
+			time.sleep(2)
+			#pyautogui.press("enter")
 			self.__click_button("ingresar")
 		except Exception as e:
 			print(e)
@@ -130,12 +192,14 @@ class ScraperPool(threading.Thread):
 
 	def __close_nav(self):
 		try:
-			self.__process.terminate()
-			time.sleep(5)
-			if self.__process.poll() is None: 
-				self.__process.kill()
-		except:
-			pass
+			if os.name == 'nt':  # Para Windows
+				subprocess.call("taskkill /IM chrome.exe /F", shell=True)
+			else: 
+				subprocess.call("pkill -f chrome", shell=True)
+			print("Todos los procesos de Chrome han sido cerrados.")
+		
+		except Exception as e:
+			print(f"Error al cerrar Chrome: {e}")
 	
 	def __navigate_link(self, linkDestiny:str)->bool:
 		try:

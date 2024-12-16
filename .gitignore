@@ -1,3 +1,6 @@
-/__pycache__
+__pycache__/
 *.log
 /.vscode
+test.py
+*.reg
+notes.py
