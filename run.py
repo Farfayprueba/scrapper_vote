@@ -1,4 +1,4 @@
-from app.controllers.controller import Controller
+from app.controllers.pool_controller import Controller
 import sys
 
 if __name__ == '__main__':
