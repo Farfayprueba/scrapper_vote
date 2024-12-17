@@ -7,7 +7,7 @@ class ProxyModel:
 	@classmethod
 	def get_proxys(cls, proxyApi:str)->List[ProxyEntity]:
 		response = requests.get(
-				"https://proxy.webshare.io/api/v2/proxy/list/?mode=direct&page=1&page_size=25",
+				"https://proxy.webshare.io/api/v2/proxy/list/?mode=direct&page=1&page_size=100000",
 				headers={"Authorization": f"Token {proxyApi}"}
 			)
 		proxiesJson = response.json()["results"]

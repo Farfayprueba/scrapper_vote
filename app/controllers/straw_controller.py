@@ -21,10 +21,11 @@ class Controller:
 		driver = drivers[f"driver_{1}"]
 		proxies = cls.__get_proxys()
 		proxyService = ProxyService(proxies)
-		for proxy in proxies:
+		for idx, proxy in enumerate(proxies):
 			proxyService.set_proxy()
-			scrapper = ScraperStrawPool(driver)
-			scrapper.run()
+			scrapper = ScraperStrawPool(driver,idx)
+			scrapper.start()
+			scrapper.join()
 			proxyService.disable_proxy()
 		for driver in drivers.values(): 
 			cls.__close_driver(driver)

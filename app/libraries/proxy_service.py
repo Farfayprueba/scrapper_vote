@@ -59,6 +59,20 @@ class ProxyService:
 			"""
 		subprocess.run(["powershell", "-Command", script], check=True)
 
+	@staticmethod
+	def set_proxy_on_off(option:str, proxyIp:str, proxyPort:str):
+		if option == 'on':
+			script = f"""
+			$proxyServer = '{proxyIp}:{proxyPort}'
+			Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' -Name ProxyEnable -Value 1
+			Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' -Name ProxyServer -Value $proxyServer
+			"""
+		elif option == 'off':
+			script = """
+			Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' -Name ProxyEnable -Value 0
+			"""
+		subprocess.run(["powershell", "-Command", script], check=True)
+
 	def get_proxies_list(self):
 		if _ENV.enviroment.proxy == 'True':
 			proxyList = self.__backup
