@@ -49,6 +49,9 @@ class ScraperStrawPool(threading.Thread):
 	def __vote(self):
 		try:
 			voteButton = self.__driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
+			self.__driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+			time.sleep(1)
 			self.__driver.execute_script("arguments[0].click();", voteButton)
+			time.sleep(5)
 		except Exception as e:
 			print(e)
