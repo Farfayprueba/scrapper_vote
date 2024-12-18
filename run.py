@@ -1,5 +1,8 @@
-from app.controllers.pool_controller import Controller
+from app.controllers.straw_controller import Controller
+from app import _ENV
 import sys
 
 if __name__ == '__main__':
-	Controller.main()
+	block = _ENV.enviroment.block
+	lenBlock = _ENV.enviroment.lenblock
+	Controller.main(int(block), int(lenBlock))
