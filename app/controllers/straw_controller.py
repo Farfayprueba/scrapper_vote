@@ -1,7 +1,9 @@
 import time
 import math
+import pyautogui
 from app import _ENV
 from typing import List
+import threading
 from selenium.webdriver import Firefox
 from selenium import webdriver
 from app.entities.proxy_entity import ProxyEntity
@@ -22,12 +24,13 @@ class Controller:
 		proxies = cls.__get_proxys(block, lenBlock)
 		proxyService = ProxyService(proxies)
 		for idx, proxy in enumerate(proxies):
-			#proxyService.set_proxy()
+			print(f"driver {idx+1} con el proxy: {proxy.ip}:{proxy.port}")
+			auth_thread = threading.Thread(target=cls.__enter_proxy_auth, args=(proxy,))
+			auth_thread.start() 
 			driver = Driver.firefox(proxy= proxy,cache='disable')
-			scrapper = ScraperStrawPool(driver,idx)
+			scrapper = ScraperStrawPool(driver,idx,proxy)
 			scrapper.start()
 			scrapper.join()
-			#proxyService.disable_proxy()
 			cls.__close_driver(driver)
 
 	@classmethod
@@ -58,3 +61,11 @@ class Controller:
 	def __init_drivers(cls, driverScrap:dict):
 		for driver in driverScrap.values():
 			driver.get("https://www.google.com/")
+
+	@staticmethod
+	def __enter_proxy_auth(proxy):
+		time.sleep(10)
+		pyautogui.typewrite(proxy.user)
+		pyautogui.press('tab')
+		pyautogui.typewrite(proxy.password)
+		pyautogui.press('enter')
