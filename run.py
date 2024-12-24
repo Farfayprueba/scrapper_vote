@@ -1,4 +1,4 @@
-from app.controllers.straw_controller import Controller
+from app.controllers.pool_chile import Controller
 from app import _ENV
 import sys
 

@@ -5,7 +5,7 @@ from .function_entities import *
 class ProxyEntity:
 	ip      : str
 	port    : str
-	user: str
+	username: str
 	password: str
 
 	@staticmethod
