@@ -79,16 +79,16 @@ class Driver:
 		while driver == None:
 			try:
 				profile = webdriver.FirefoxProfile()
-				profile.set_preference("browser.cache.disk.enable", False)
-				profile.set_preference("browser.cache.memory.enable", False)
-				profile.set_preference("browser.cache.offline.enable", False)
+				#profile.set_preference("browser.cache.disk.enable", False)
+				#profile.set_preference("browser.cache.memory.enable", False)
+				#profile.set_preference("browser.cache.offline.enable", False)
 				profile.set_preference("network.http.use-cache", False)
 				profile.set_preference("media.autoplay.default", 0)
 				profile.set_preference("toolkit.cosmeticAnimations.enabled", False)
 				profile.set_preference("network.predictor.enabled", False)
 				profile.set_preference("app.update.enabled", False)
 				profile.set_preference("extensions.update.enabled", False)
-				profile.set_preference("network.cookie.cookieBehavior", 2)
+				#profile.set_preference("network.cookie.cookieBehavior", 2)
 				if proxy is None:
 					if cache == 'disable':
 						driver = webdriver.Firefox(executable_path=_ENV.driver.firefox, firefox_profile=profile)
