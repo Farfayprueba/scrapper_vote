@@ -22,4 +22,5 @@ class ProxyModel:
 			if not data.get("next"):
 				break
 			page += 1
+		all_proxies.sort(key=lambda proxy: proxy.ip)
 		return all_proxies
