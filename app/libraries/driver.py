@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-import seleniumwire.undetected_chromedriver as uc
+#import seleniumwire.undetected_chromedriver as uc
 
 class Driver:
 
@@ -24,17 +24,17 @@ class Driver:
 		driver.maximize_window()
 		return driver
 
-	@staticmethod
-	def chrome_wire():
-		chrome_options = uc.ChromeOptions()
-		driver = uc.Chrome(
-			executable_path = _ENV.driver.chrome,
-			options=chrome_options,
-			seleniumwire_options={}
-		)
-		driver.implicitly_wait(30)
-		driver.maximize_window()
-		return driver
+	# @staticmethod
+	# def chrome_wire():
+	# 	chrome_options = uc.ChromeOptions()
+	# 	driver = uc.Chrome(
+	# 		executable_path = _ENV.driver.chrome,
+	# 		options=chrome_options,
+	# 		seleniumwire_options={}
+	# 	)
+	# 	driver.implicitly_wait(30)
+	# 	driver.maximize_window()
+	# 	return driver
 
 	@staticmethod
 	def firefox(proxy=None, cache=None):
