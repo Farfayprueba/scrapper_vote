@@ -41,7 +41,7 @@ class NumetikaController:
 	def __open_drivers(cls, proxy: ProxyEntity)->dict:
 		drivers = dict()
 		for d in range(1, cls.__driversToWork+1):
-			drivers.__setitem__(f'driver_{d}', Driver.firefox(proxy= proxy, cache='disable'))
+			drivers.__setitem__(f'driver_{d}', Driver.firefox_wire(proxy= proxy, cache='disable'))
 		return drivers
 
 	@classmethod
