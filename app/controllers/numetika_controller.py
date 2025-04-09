@@ -12,14 +12,15 @@ class NumetikaController:
 	
 	@classmethod
 	def main(cls):
-		drivers = cls.__open_drivers()
-		tasks = []
-		for idx in range(1, cls.__driversToWork+1):
-			task = NumetikaScraper(drivers.get(f"driver_{idx}"),idx)
-			tasks.append(task)
-		for task in tasks: task.start()
-		for task in tasks: task.join()
-		for driver in drivers.values(): cls.__close_driver(driver)
+		while True:
+			drivers = cls.__open_drivers()
+			tasks = []
+			for idx in range(1, cls.__driversToWork+1):
+				task = NumetikaScraper(drivers.get(f"driver_{idx}"),idx)
+				tasks.append(task)
+			for task in tasks: task.start()
+			for task in tasks: task.join()
+			for driver in drivers.values(): cls.__close_driver(driver)
   
 	
 	@classmethod
