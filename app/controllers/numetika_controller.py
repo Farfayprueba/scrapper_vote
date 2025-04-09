@@ -15,9 +15,9 @@ class NumetikaController:
 	__driversToWork = 6
 	
 	@classmethod
-	def main(cls):
+	def main(cls, block: int = 1, lenBlock: int = 1):
 		while True:
-			proxies = cls.__get_proxys(1, 1)
+			proxies = cls.__get_proxys(block, lenBlock)
 			for idx, proxy in enumerate(proxies):
 				drivers = cls.__open_drivers(proxy)
 				tasks = []
