@@ -1,10 +1,14 @@
 
 from app import _ENV
+from typing import List
+import math
 import threading
 from selenium import webdriver
 from app.libraries.driver import Driver
 from app.scraper.numetika_scraper import NumetikaScraper
-
+from app.models.proxy_model import ProxyModel
+from app.libraries.proxy_service import ProxyService
+from app.entities.proxy_entity import ProxyEntity
 
 class NumetikaController:
 	
@@ -13,21 +17,31 @@ class NumetikaController:
 	@classmethod
 	def main(cls):
 		while True:
-			drivers = cls.__open_drivers()
-			tasks = []
-			for idx in range(1, cls.__driversToWork+1):
-				task = NumetikaScraper(drivers.get(f"driver_{idx}"),idx)
-				tasks.append(task)
-			for task in tasks: task.start()
-			for task in tasks: task.join()
-			for driver in drivers.values(): cls.__close_driver(driver)
+			proxies = cls.__get_proxys(1, 1)
+			for idx, proxy in enumerate(proxies):
+				drivers = cls.__open_drivers(proxy)
+				tasks = []
+				for idx in range(1, cls.__driversToWork+1):
+					task = NumetikaScraper(drivers.get(f"driver_{idx}"),idx)
+					tasks.append(task)
+				for task in tasks: task.start()
+				for task in tasks: task.join()
+				for driver in drivers.values(): cls.__close_driver(driver)
   
-	
 	@classmethod
-	def __open_drivers(cls)->dict:
+	def __get_proxys(cls,block:int, lenBlock:int) -> List[ProxyEntity]:
+		api = _ENV.enviroment.proxyapi
+		proxies = ProxyModel.get_proxys(api)
+		if lenBlock == 1: return proxies
+		increase = math.ceil(len(proxies)/lenBlock)
+		proxies = [proxies[i:i + increase] for i in range(0, len(proxies), increase)]
+		return proxies[block-1]	
+ 
+	@classmethod
+	def __open_drivers(cls, proxy: ProxyEntity)->dict:
 		drivers = dict()
 		for d in range(1, cls.__driversToWork+1):
-			drivers.__setitem__(f'driver_{d}', Driver.firefox(cache='disable'))
+			drivers.__setitem__(f'driver_{d}', Driver.firefox(proxy= proxy, cache='disable'))
 		return drivers
 
 	@classmethod

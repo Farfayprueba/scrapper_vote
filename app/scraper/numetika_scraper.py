@@ -4,7 +4,6 @@ import random
 from app import _ENV
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 
@@ -34,7 +33,7 @@ class NumetikaScraper(threading.Thread):
 		
 	def __get_url(self):
 		try:
-			self.__driver.get("https://numetika.online/gubernatura/estudio-preferencias-voto-2027.php?utm_source=facebook&utm_medium=social&utm_campaign=compartir")	
+			self.__driver.get("https://numetika.online/gubernatura/estudio-preferencias-voto-2027.php")	
 			time.sleep(5)
 		except Exception as e:
 			print(e)
