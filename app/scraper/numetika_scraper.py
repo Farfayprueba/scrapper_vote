@@ -33,7 +33,7 @@ class NumetikaScraper(threading.Thread):
 		
 	def __get_url(self):
 		try:
-			self.__driver.get("https://numetika.online/gubernatura/estudio-preferencias-voto-2027.php")	
+			self.__driver.get("https://numetika.online/gubernatura/estudio-preferencias-voto-2027.php?utm_source=facebook&utm_medium=social&utm_campaign=compartir")	
 			time.sleep(5)
 		except Exception as e:
 			print(e)
