@@ -12,7 +12,7 @@ from app.entities.proxy_entity import ProxyEntity
 
 class NumetikaController:
 	
-	__driversToWork = 6
+	__driversToWork = 3
 	
 	@classmethod
 	def main(cls, block: int = 1, lenBlock: int = 1):

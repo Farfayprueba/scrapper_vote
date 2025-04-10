@@ -18,6 +18,7 @@ class ProxyModel:
 				raise Exception(f"Error {response.status_code}: {response.text}")
 			data = response.json()
 			proxiesJson = data["results"]
+			proxiesJson = [proxy for proxy in proxiesJson if proxy.get("country_code") == "MX"]
 			all_proxies.extend([ProxyEntity.from_dict(proxy) for proxy in proxiesJson])
 			if not data.get("next"):
 				break
