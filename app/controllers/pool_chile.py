@@ -12,8 +12,8 @@ from app.scraper.scraper_chile import ScraperPoolChile
 
 class Controller:
 
-	__driversToWork = 3
-	__proxies       = List[ProxyEntity]
+	__driversToWork = 5
+	__proxies       : List[ProxyEntity]
 	
 	@classmethod
 	def main(cls, block: int = 1, lenBlock: int = 1):
