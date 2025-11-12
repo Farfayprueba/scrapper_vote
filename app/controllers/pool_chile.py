@@ -1,7 +1,6 @@
 import time
 import math
 import random
-import pyautogui
 from app import _ENV
 from typing import List
 from selenium.webdriver import Firefox
@@ -13,25 +12,31 @@ from app.scraper.scraper_chile import ScraperPoolChile
 
 class Controller:
 
-	__driversToWork = 5
+	__driversToWork = 3
+	__proxies       = List[ProxyEntity]
 	
 	@classmethod
 	def main(cls, block: int = 1, lenBlock: int = 1):
 		taskes = []
-		print(f"Iniciando proceso de bots {block} de {lenBlock}")
-		proxys = cls.__get_proxys(block,lenBlock)
+		print("Iniciando bot de votación")
+		startIteration = 1
+		cls.__proxies = cls.__get_proxys(block,lenBlock)
+		drivers = cls.__open_drivers()
 		while True:
-			randomProxy = random.choice(proxys)
-			print(randomProxy)
-			drivers = cls.__open_drivers(randomProxy)
+			cls.__init_drivers(drivers)
 			taskes = []
 			for driver in drivers.values():
 				task = ScraperPoolChile(driver, 1)
 				taskes.append(task)
 			for task in taskes: task.start()
 			for task in taskes: task.join()
-			for driver in drivers.values():
-				cls.__close_driver(driver)
+			print(f"grupo de votos concluidos: {startIteration}")
+			cls.__clear_cache(drivers)
+			if startIteration % 3 == 0:
+				for driver in drivers.values():
+					cls.__close_driver(driver)
+				drivers = cls.__open_drivers()
+			startIteration += 1
 			time.sleep(3)
 
 	@classmethod
@@ -44,10 +49,11 @@ class Controller:
 		return proxies[block-1]
 
 	@classmethod
-	def __open_drivers(cls, proxy: ProxyEntity)->dict:
+	def __open_drivers(cls)->dict:
+		randomProxy = random.choice(cls.__proxies)
 		drivers = dict()
 		for d in range(1, cls.__driversToWork+1):
-			drivers.__setitem__(f'driver_{d}', Driver.firefox_wire(proxy, cache='disable'))
+			drivers.__setitem__(f'driver_{d}', Driver.firefox_wire(randomProxy, cache='disable'))
 		return drivers
 	
 	@classmethod
@@ -63,10 +69,17 @@ class Controller:
 		for driver in driverScrap.values():
 			driver.get("https://www.google.com/")
 
-	@staticmethod
-	def __enter_proxy_auth(proxy):
-		time.sleep(10)
-		pyautogui.typewrite(proxy.user)
-		pyautogui.press('tab')
-		pyautogui.typewrite(proxy.password)
-		pyautogui.press('enter')
+	@classmethod
+	def __clear_cache(cls, driverScrap: dict):
+		for driver in driverScrap.values():
+			cls.__clean_browser_cache(driver)
+
+	@classmethod
+	def __clean_browser_cache(cls, driver):
+		try:
+			driver.delete_all_cookies()
+			driver.execute_script("window.localStorage.clear();")
+			driver.execute_script("window.sessionStorage.clear();")
+			driver.get("about:blank")
+		except Exception as e:
+			print(f"Error limpiando caché: {e}")

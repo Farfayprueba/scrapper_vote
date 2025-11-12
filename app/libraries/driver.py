@@ -91,9 +91,9 @@ class Driver:
 				#profile.set_preference("network.cookie.cookieBehavior", 2)
 				if proxy is None:
 					if cache == 'disable':
-						driver = webdriver.Firefox(executable_path=_ENV.driver.firefox, firefox_profile=profile)
+						driver = webdriver.Firefox(executable_path="storage/geckodriver.exe", firefox_profile=profile)
 					else:
-						driver = webdriver.Firefox(executable_path=_ENV.driver.firefox)
+						driver = webdriver.Firefox(executable_path="storage/geckodriver.exe")
 				else:
 					proxy_url = f"http://{proxy.username}:{proxy.password}@{proxy.ip}:{proxy.port}" 
 					seleniumwire_options = {
@@ -103,9 +103,9 @@ class Driver:
 					    },
 					}
 					if cache == 'disable':
-						driver = webdriver_wire.Firefox(executable_path=_ENV.driver.firefox, seleniumwire_options=seleniumwire_options, firefox_profile=profile)
+						driver = webdriver_wire.Firefox(executable_path="storage/geckodriver.exe", seleniumwire_options=seleniumwire_options, firefox_profile=profile)
 					else:
-						driver = webdriver_wire.Firefox(executable_path=_ENV.driver.firefox)
+						driver = webdriver_wire.Firefox(executable_path="storage/geckodriver.exe")
 			except Exception as e:
 				Driver.close(driver)
 				driver = None
