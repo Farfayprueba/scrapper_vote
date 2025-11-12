@@ -23,21 +23,24 @@ class Controller:
 		cls.__proxies = cls.__get_proxys(block,lenBlock)
 		drivers = cls.__open_drivers()
 		while True:
-			cls.__init_drivers(drivers)
-			taskes = []
-			for driver in drivers.values():
-				task = ScraperPoolChile(driver, 1)
-				taskes.append(task)
-			for task in taskes: task.start()
-			for task in taskes: task.join()
-			print(f"grupo de votos concluidos: {startIteration}")
-			cls.__clear_cache(drivers)
-			if startIteration % 3 == 0:
+			try:
+				cls.__init_drivers(drivers)
+				taskes = []
 				for driver in drivers.values():
-					cls.__close_driver(driver)
-				drivers = cls.__open_drivers()
-			startIteration += 1
-			time.sleep(3)
+					task = ScraperPoolChile(driver, 1)
+					taskes.append(task)
+				for task in taskes: task.start()
+				for task in taskes: task.join()
+				print(f"grupo de votos concluidos: {startIteration}")
+				cls.__clear_cache(drivers)
+				if startIteration % 3 == 0:
+					for driver in drivers.values():
+						cls.__close_driver(driver)
+					drivers = cls.__open_drivers()
+				startIteration += 1
+				time.sleep(3)
+			except Exception as e:
+				pass
 
 	@classmethod
 	def __get_proxys(cls,block:int, lenBlock:int) -> List[ProxyEntity]:
