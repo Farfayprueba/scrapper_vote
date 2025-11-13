@@ -24,7 +24,6 @@ class Controller:
 		drivers = cls.__open_drivers()
 		while True:
 			try:
-				cls.__init_drivers(drivers)
 				taskes = []
 				for driver in drivers.values():
 					task = ScraperPoolChile(driver, 1)
