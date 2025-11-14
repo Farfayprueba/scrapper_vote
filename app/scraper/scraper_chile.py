@@ -44,7 +44,7 @@ class ScraperPoolChile(threading.Thread):
 				self.__fill_data()
 				time.sleep(2)
 				self.__go_next()
-				time.sleep(2)
+				time.sleep(5)
 		else:
 			print("no cargo nada")
 

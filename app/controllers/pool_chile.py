@@ -32,7 +32,7 @@ class Controller:
 				for task in taskes: task.join()
 				print(f"grupo de votos concluidos: {startIteration}")
 				cls.__clear_cache(drivers)
-				if startIteration % 3 == 0:
+				if startIteration % 10 == 0:
 					for driver in drivers.values():
 						cls.__close_driver(driver)
 					drivers = cls.__open_drivers()
