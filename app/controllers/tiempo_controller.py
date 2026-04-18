@@ -21,8 +21,8 @@ class Controller:
 		print("Iniciando bot de votación")
 		startIteration = 1
 		cls.__proxies = cls.__get_proxys(block,lenBlock)
-		drivers = cls.__open_drivers()
-		while True:
+		drivers = cls.__open_drivers(cls.__proxies[0])
+		for groupProxy in cls.__proxies:
 			try:
 				taskes = []
 				for driver in drivers.values():
@@ -35,7 +35,7 @@ class Controller:
 				if startIteration % 10 == 0:
 					for driver in drivers.values():
 						cls.__close_driver(driver)
-					drivers = cls.__open_drivers()
+					drivers = cls.__open_drivers(groupProxy)
 				startIteration += 1
 				time.sleep(3)
 			except Exception as e:
@@ -45,16 +45,16 @@ class Controller:
 	def __get_proxys(cls,block:int, lenBlock:int) -> List[ProxyEntity]:
 		api = _ENV.enviroment.proxyapi
 		proxies = ProxyModel.get_proxys(api)
-		if lenBlock == 1: return proxies
-		increase = math.ceil(len(proxies)/lenBlock)
+		#if lenBlock == 1: return proxies
+		increase = math.ceil(len(proxies)/(len(proxies)/cls.__driversToWork))
 		proxies = [proxies[i:i + increase] for i in range(0, len(proxies), increase)]
-		return proxies[block-1]
+		return proxies #[block-1]
 
 	@classmethod
-	def __open_drivers(cls)->dict:
-		randomProxy = random.choice(cls.__proxies)
+	def __open_drivers(cls, groupProxy: list = None)->dict:
 		drivers = dict()
 		for d in range(1, cls.__driversToWork+1):
+			randomProxy = random.choice(cls.__proxies) if groupProxy is None else groupProxy[d-1]
 			drivers.__setitem__(f'driver_{d}', Driver.firefox_wire(randomProxy, cache='disable'))
 		return drivers
 	

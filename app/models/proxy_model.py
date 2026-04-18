@@ -9,7 +9,7 @@ class ProxyModel:
 		all_proxies = []
 		page = 1
 		page_size = 100 
-		while True and page <= 8:
+		while True and page <= 100:
 			response = requests.get(
 				f"https://proxy.webshare.io/api/v2/proxy/list/?mode=direct&page={page}&page_size={page_size}",
 				headers={"Authorization": f"Token {proxyApi}"}
