@@ -42,7 +42,7 @@ class ScraperPool(threading.Thread):
 			time.sleep(3)
 			self.__navigate_link(self.__linkValidation)
 			time.sleep(3)
-			for i in range(14):
+			for i in range(7):
 				self.__click_next()
 			self.__votar()
 			time.sleep(1)
@@ -69,6 +69,7 @@ class ScraperPool(threading.Thread):
 
 	def __click_next(self):
 		try:
+			time.sleep(1)
 			pyautogui.press("right")
 			time.sleep(1)
 		except Exception as e:
@@ -93,18 +94,13 @@ class ScraperPool(threading.Thread):
 
 	def __validate_objetive(self):
 		try:
-			self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-			filename = f'pagina_{self.timestamp}.html'
+			filename = f'pagina_web.html'
 			full_path = os.path.join(_ENV.paths.downloads, filename)
 			self.__save_html(filename)
 			time.sleep(5)
 			value = self.__process_html(full_path)
 			if os.path.isfile(full_path): 
 				os.remove(full_path)
-			folder_to_remove = os.path.join(_ENV.paths.downloads, f'{filename}_files')
-			if os.path.isdir(folder_to_remove):  
-				shutil.rmtree(folder_to_remove) 
-				print("Eliminado correctamente")
 			return value  
 		except Exception as e:
 			print(e)
@@ -229,7 +225,7 @@ class ScraperPool(threading.Thread):
 		
 	def __load_page(self)->bool:
 		try:
-			self.__navigate_link("https://www.pagina7.cl/premios-cordillera/")
+			self.__navigate_link("https://www.pagina7.cl/premioscordillera/ingresar/")
 		except:
 			return False
 		
@@ -249,7 +245,7 @@ class ScraperPool(threading.Thread):
 			subprocess.Popen(command, shell=True)
 			pyautogui.press('enter')  
 			time.sleep(5)
-			pyautogui.hotkey('ctrl', 'shift', 'del') 
+			pyautogui.hotkey('ctrl', 'shift', 'del')
 			time.sleep(2) 
 			pyautogui.press('down', presses=1)
 			pyautogui.press('tab')  
